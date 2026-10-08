@@ -6,9 +6,6 @@
   ```
   minikube star
   ```
-  ```
-  kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- /agnhost netexec --http-port=8080
-  ```
   Checking minikube cluster info.:
   ```
   minikube status
@@ -19,4 +16,17 @@
 
   #get all api-resources
   for i in `kubectl api-resources | awk '{print $1}'`; do echo  -e "-----------------\nkubectl get $i\n" && kubectl get $i; done
+  ```
+
+  Create deployment agnhost:2.53:
+  ```
+  kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- /agnhost netexec --http-port=8080
+  ```
+  ```
+  kubectl get pod,service,deployment -o wide
+  ```
+  Expose the application as a Service:
+  To access the container's web server from outside the Minikube cluster, expose the deployment as a LoadBalancer type service:
+  ```
+  kubectl expose deployment hello-node --type=LoadBalancer --port=8080
   ```
