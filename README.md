@@ -4,7 +4,7 @@
 
 - #### Start your Minikube cluster:
   ```
-  minikube star
+  minikube star --driver=docker
   ```
   Checking minikube cluster info.:
   ```
@@ -68,7 +68,7 @@
   Use "app [command] --help" for more information about a command.
   ```
 
-- #### connect
+- **connect:** Attempts a TCP, UDP or SCTP connection and returns useful errors  
   - Create agnhost-backend pod and service, the target server
   - Create hello-node pod, the testing server
   ```
@@ -92,13 +92,29 @@
   ```
 <br>
 
-- #### audit-proxy
-
+- **audit-proxy:** Listens on port 8080 for incoming audit events  
+  Create and run the audit-proxy subcommand inside a Kubernetes Pod
   ```
   kubectl run test-agnhost --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- audit-proxy
-  kubectl exec test-agnhost -- /agnhost audit-proxy
+  kubectl port-forward pod/agnhost-audit-proxy 8080:8080
+  ```
+  Inspect the proxy logs:
+  ```
   kubectl logs -f test-agnhost
   ```
+  Trigger events:
+  ```
+
+  ```
+<br>
+
+- **completion:** Generate the autocompletion script for the specified shell
+
+
+
+
+
+
 
   
   ```
