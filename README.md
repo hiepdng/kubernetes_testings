@@ -68,12 +68,31 @@
   Use "app [command] --help" for more information about a command.
   ```
 
-  #### connect
+- #### connect
+  - Create agnhost-backend pod and service, the target server
+  - Create hello-node pod, the testing server
   ```
   kubectl run agnhost-backend --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- netexec --http-port=1111
-  kubectl expose  pod/agnhost-backend --port=2222 --target-port=1111
-  kubectl run hiep-test --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  kubectl expose  pod/agnhost-backend --port=2222 --target-port=1111 --protocol=TCP
+  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
   ```
+  - List all pods and serices
+  ```python
+  $ kubectl get all
+  NAME                  READY   STATUS    RESTARTS   AGE
+  pod/agnhost-backend   1/1     Running   0          14s
+  pod/hello-node        1/1     Running   0          13s
+
+  NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+  service/agnhost-backend   ClusterIP   10.111.10.160   <none>        2222/TCP   13s
+  ```
+  - Testing `connect` command
+  ```
+  kubectl exec pod/hello-node -- /agnhost connect agnhost-backend:2222
+  ```
+  
+  <br>
+  
   ```
   kubectl run  hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- netexec
   kubectl run  hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- netexec --http-port=8080
