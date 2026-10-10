@@ -172,7 +172,18 @@
   fe00::2 ip6-allrouters
   10.244.0.6      hello-node
   ```
+<br>
 
+- **fake-gitserver:** akes a git server    
+  - Create and run hello-node pod.  
+  ```
+  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  ```
+  - Prints the host's DNS suffix list  
+  ```python
+  $ kubectl exec hello-node -- /agnhost dns-suffix
+  ```
+  
 
 
 
