@@ -67,6 +67,7 @@
 
   Use "app [command] --help" for more information about a command.
   ```
+<br>
 
 - **connect:** Attempts a TCP, UDP or SCTP connection and returns useful errors  
   - Create agnhost-backend pod and service, the target server
@@ -93,22 +94,57 @@
 <br>
 
 - **audit-proxy:** Listens on port 8080 for incoming audit events  
-  Create and run the audit-proxy subcommand inside a Kubernetes Pod
+  - Create and run the audit-proxy subcommand inside a Kubernetes Pod
   ```
   kubectl run test-agnhost --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- audit-proxy
   kubectl port-forward pod/agnhost-audit-proxy 8080:8080
   ```
-  Inspect the proxy logs:
+  - Inspect the proxy logs:
   ```
   kubectl logs -f test-agnhost
   ```
-  Trigger events:
+  - Trigger events:
   ```
-
+  $
   ```
 <br>
 
-- **completion:** Generate the autocompletion script for the specified shell
+- **completion:** Generate the autocompletion script for the specified shell  
+  - Create and run agnhost-completion pod
+  ```
+  kubectl run agnhost-completion --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  ```
+  - Create completion in bash, fish, powershell, zsh
+  ```python
+  kubectexec agnhost-competion -- /agnhost completion bash
+  kubectexec agnhost-competion -- /agnhost completion fish
+  kubectexec agnhost-competion -- /agnhost completion powershell
+  kubectexec agnhost-competion -- /agnhost completion zsh
+  ```
+<br>
+
+- **dns-server-list:** Prints the host's DNS Server list  
+  - Create and run hello-node pod.  
+  ```
+  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  ```
+  - Prints the host's DNS Server list  
+  ```python
+  $ kubectl exec hello-node -- /agnhost dns-server-list
+  10.96.0.10
+  ```
+<br>
+
+- **dns-suffix:** Prints the host's DNS suffix list  
+  - Create and run hello-node pod.  
+  ```
+  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  ```
+  - Prints the host's DNS suffix list  
+  ```python
+  $ kubectl exec hello-node -- /agnhost dns-suffix
+  default.svc.cluster.local,svc.cluster.local,cluster.local
+  ```
 
 
 
