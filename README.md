@@ -88,10 +88,18 @@
   ```
   - Testing `connect` command
   ```
-  kubectl exec pod/hello-node -- /agnhost connect agnhost-backend:2222
+  kubectl exec pod/hello-node -- /agnhost connect agnhost-backend:2222 --protocol=tcp
   ```
-  
-  <br>
+<br>
+
+- #### audit-proxy
+
+  ```
+  kubectl run test-agnhost --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- audit-proxy
+  kubectl exec test-agnhost -- /agnhost audit-proxy
+  kubectl logs -f test-agnhost
+  ```
+
   
   ```
   kubectl run  hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- netexec
@@ -104,16 +112,7 @@
   kubectl expose  pod/agnhost-backend --port=8080 --target-port=8080
   ```
   ```python
-  kubectl get all
-  NAME                              READY   STATUS    RESTARTS   AGE
-  pod/hello-node-78b9f44d96-qszq7   1/1     Running   0          138m
-  pod/my-nginx-5b54c4bbdf-zwwbs     1/1     Running   0          55m
 
-  NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-  service/my-nginx     ClusterIP   10.103.225.239   <none>        8088/TCP   43m
-
-  NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
-  deployment.apps/hello-node   1/1     1            1           138m
   ```
 
   ```
