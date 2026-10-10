@@ -174,7 +174,7 @@
   ```
 <br>
 
-- **fake-gitserver:** akes a git server    
+- **fake-gitserver:** Fakes a git server    
   - Create and run test-fake-gitserver pod and service.  
   ```
   kubectl run test-fake-gitserver --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- fake-gitserver
@@ -197,7 +197,41 @@
   Cloning into 'test-fake-gitserver'...
   warning: You appear to have cloned an empty repository.
   ```
-  
+<br>
+
+- **grpc-health-checking:** Starts a simple grpc health checking endpoint  
+  - Manifest file grpc-liveness.yaml to test grpc-health-checking.
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: agnhost-grpc-test
+    labels:
+      app: grpc-health-test
+  spec:
+    containers:
+      - name: agnhost
+        image: registry.k8s.io/e2e-test-images/agnhost:2.45
+        # Command to spin up the gRPC health checking endpoint
+        command: ["/agnhost", "grpc-health-checking", "--port=5000", "--delay-unhealthy-sec=60"]
+        ports:
+          - containerPort: 5000
+        livenessProbe:
+          grpc:
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+  ```
+  - Deploy the Pod
+  ```bash
+  kubectl apply -f grpc-liveness.yaml
+  ```
+  - Check Initial Health (Expecting SERVING)
+  ```bash
+  kubectl exec agnhost-grpc-test -- /grpc_health_probe -addr=:5000
+  ```
+
+
 
 
 
