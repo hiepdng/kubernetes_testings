@@ -97,7 +97,7 @@
   - Create and run the audit-proxy subcommand inside a Kubernetes Pod
   ```
   kubectl run test-agnhost --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- audit-proxy
-  kubectl port-forward pod/agnhost-audit-proxy 8080:8080
+  kubectl port-forward pod/test=agnhost 8080:8080
   ```
   - Inspect the proxy logs:
   ```
@@ -175,13 +175,27 @@
 <br>
 
 - **fake-gitserver:** akes a git server    
-  - Create and run hello-node pod.  
+  - Create and run test-fake-gitserver pod and service.  
   ```
-  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  kubectl run test-fake-gitserver--image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- fake-gitserver
+  kubectl exec test-fake-gitserver --port=8000
   ```
-  - Prints the host's DNS suffix list  
+  - Forward pod's port 8000 to host machine port 8000  
   ```python
-  $ kubectl exec hello-node -- /agnhost dns-suffix
+  kubectl port-forward service/test-fake-gitserver  8000:8000
+  ```
+  - Testing
+  ```
+  $ curl -w "\n" http://localhost:8000
+  I am a fake git server
+
+  $ git clone http://localhost:8000
+  Cloning into 'localhost'...
+  warning: You appear to have cloned an empty repository.
+
+  git clone http://localhost:8000  test-fake-gitserver
+  Cloning into 'localhost'...
+  warning: You appear to have cloned an empty repository.
   ```
   
 
