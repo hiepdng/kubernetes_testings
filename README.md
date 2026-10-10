@@ -200,42 +200,47 @@
 <br>
 
 - **grpc-health-checking:** Starts a simple grpc health checking endpoint  
-  - Manifest file grpc-liveness.yaml to test grpc-health-checking.
-  ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: agnhost-grpc-test
-    labels:
-      app: grpc-health-test
-  spec:
-    containers:
-      - name: agnhost
-        image: registry.k8s.io/e2e-test-images/agnhost:2.45
-        # Command to spin up the gRPC health checking endpoint
-        command: ["/agnhost", "grpc-health-checking", "--port=5000", "--delay-unhealthy-sec=60"]
-        ports:
-          - containerPort: 5000
-        livenessProbe:
-          grpc:
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-  ```
-  - Deploy the Pod
+  - Create and run grpc-test pod:  
   ```bash
-  kubectl apply -f grpc-liveness.yaml
+  kubectl run grpc-test --image=registry.k8s.io/e2e-test-images/agnhost:2.53
   ```
-  - Check Initial Health (Expecting SERVING)
+   - Test and Verify Status: 
+  ```
+  ```python
+  $ kubectl exec -it grpc-test -- /agnhost grpc-health-checking \
+      --delay-unhealthy-sec 5 --service "" \
+      --port 5000 --http-port 8080
+  I1010 22:55:04.772001      16 log.go:245] Http server starting to listen on :8080
+  I1010 22:55:04.772164      16 log.go:245] gRPC server starting to listen on :5000
+  ```
+  - Force an Unhealthy State: 
   ```bash
-  kubectl exec agnhost-grpc-test -- /grpc_health_probe -addr=:5000
+  kubectl exec grpc-test -- curl http://localhost:8080/make-not-serving
+  ```
+  
+  - Checking  grpc-test status again 
+  ```python
+  $ ubectl exec -it grpc-test -- /agnhost grpc-health-checking \
+      --delay-unhealthy-sec 5 --service "" \
+      --port 5000 --http-port 8080
+  I1010 22:55:04.772001      16 log.go:245] Http server starting to listen on :8080
+  I1010 22:55:04.772164      16 log.go:245] gRPC server starting to listen on :5000
+  I1010 22:55:14.349575      16 log.go:245] Mark as unhealthy
+  ```
+
+                             
+- **guestbook:** Creates a HTTP server with various endpoints representing a guestbook app    
+  - Create and run grpc-test pod:  
+  ```bash
+  kubectl run grpc-test --image=registry.k8s.io/e2e-test-images/agnhost:2.53
   ```
 
 
 
-
-
-
+<br>
+<br>
+<br>
+<br>
   
   ```
   kubectl run  hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --port=8080 -- netexec
