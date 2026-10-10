@@ -145,8 +145,33 @@
   $ kubectl exec hello-node -- /agnhost dns-suffix
   default.svc.cluster.local,svc.cluster.local,cluster.local
   ```
+<br>
 
+- **entrypoint-tester:** Prints the args it's passed and exits   
+  ```python
+  $ kubectl run test-agnhost --image=registry.k8s.io/e2e-test-images/agnhost:2.53 --rm -i --tty \
+   -- entrypoint-tester hello world foo bar
+  [/agnhost entrypoint-tester hello world foo bar]
+  ```
+<br>
 
+- **etc-hosts:** Prints the host's /etc/hosts file
+  - Create and run hello-node pod.  
+  ```
+  kubectl run hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.53
+  ```
+  - Prints the host's /etc/hosts file
+  ```bash
+  $ kubectl exec hello-node -- etc-hosts
+  # Kubernetes-managed hosts file.
+  127.0.0.1       localhost
+  ::1     localhost ip6-localhost ip6-loopback
+  fe00::0 ip6-localnet
+  fe00::0 ip6-mcastprefix
+  fe00::1 ip6-allnodes
+  fe00::2 ip6-allrouters
+  10.244.0.6      hello-node
+  ```
 
 
 
