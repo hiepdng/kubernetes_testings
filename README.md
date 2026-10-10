@@ -177,15 +177,15 @@
 - **fake-gitserver:** akes a git server    
   - Create and run test-fake-gitserver pod and service.  
   ```
-  kubectl run test-fake-gitserver--image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- fake-gitserver
-  kubectl exec test-fake-gitserver --port=8000
+  kubectl run test-fake-gitserver --image=registry.k8s.io/e2e-test-images/agnhost:2.53 -- fake-gitserver
+  kubectl expose pod/test-fake-gitserver --port=8000
   ```
   - Forward pod's port 8000 to host machine port 8000  
   ```python
   kubectl port-forward service/test-fake-gitserver  8000:8000
   ```
   - Testing
-  ```
+  ```python
   $ curl -w "\n" http://localhost:8000
   I am a fake git server
 
@@ -193,8 +193,8 @@
   Cloning into 'localhost'...
   warning: You appear to have cloned an empty repository.
 
-  git clone http://localhost:8000  test-fake-gitserver
-  Cloning into 'localhost'...
+  $ git clone http://localhost:8000  test-fake-gitserver
+  Cloning into 'test-fake-gitserver'...
   warning: You appear to have cloned an empty repository.
   ```
   
